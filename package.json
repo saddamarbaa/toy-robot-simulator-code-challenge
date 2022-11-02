@@ -1,0 +1,17 @@
+{
+	"name": "toy-robot-simulator-code-challenge",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"author": "Saddam Arbaa",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/saddamarbaa/toy-robot-simulator-code-challenge"
+	},
+	"devDependencies": {
+		"jest": "^29.2.2"
+	},
+	"scripts": {
+		"test": "jest"
+	}
+}
