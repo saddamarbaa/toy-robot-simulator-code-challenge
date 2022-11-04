@@ -28,7 +28,7 @@ describe(`Validate Command Inputs`, () => {
   });
 
   test('Should fail to pass validation testCase3.txt unhappy path', async () => {
-    expect(await robot.validate(['TesPLACE 1, 2,EAST', 'MOVE', 'MOVE', 'LEFT', 'MOVE', 'REPORT'], true)).toBe(true);
+    expect(await robot.validate(['TesPLACE 1, 2,EAST', 'MOVE', 'MOVE', 'LEFT', 'MOVE', 'REPORT'], true)).not.toBe(true);
   });
 });
 
