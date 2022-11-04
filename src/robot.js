@@ -1,4 +1,13 @@
+const { readFromFile } = require('./utils/helper');
+
 const robot = (function () {
+  const TABLE_ROWS = 4;
+  const TABLE_COLUMNS = 4;
+  const CARDINAL_DIRECTIONS = ['NORTH', 'EAST', 'SOUTH', 'WEST'];
+  let rowAxis = null;
+  let columnAxis = null;
+  let face = null;
+
   function validateCommands(commands, returnBoolean) {
     const validationResult =
       typeof commands !== 'string' &&
@@ -41,79 +50,82 @@ const robot = (function () {
     return validationResult;
   }
 
-  function startGame(commands) {
-    const TABLE_ROWS = 4;
-    const TABLE_COLUMNS = 4;
-    let rowAxis = null;
-    let columnAxis = null;
-    let face = null;
+  function isRobotPlaceIsOutOfTable(xAxis, yAxis) {
+    return xAxis < 0 || xAxis > TABLE_ROWS || yAxis < 0 || yAxis > TABLE_COLUMNS;
+  }
 
-    for (const { command, type } of commands) {
-      switch (type) {
+  function report() {
+    if (columnAxis !== null && rowAxis !== null) {
+      console.log(`${columnAxis},${rowAxis},${CARDINAL_DIRECTIONS[face]}`);
+      return `${columnAxis},${rowAxis},${CARDINAL_DIRECTIONS[face]}`;
+    } else {
+      console.log(`Invalid command`);
+      throw new Error('Invalid command');
+    }
+  }
+
+  function place(command) {
+    // Extract x,y Axis and the direction
+    const xAxis = +command.charAt(8);
+    const yAxis = +command.charAt(6);
+    const direction = command.substring(10);
+    const cardinalDirectionIdx = CARDINAL_DIRECTIONS.findIndex((cardinalDirection) => cardinalDirection === direction);
+
+    // Terminate function if place is out of table
+    if (isRobotPlaceIsOutOfTable(xAxis, yAxis)) return;
+
+    // Saving robot place
+    rowAxis = xAxis;
+    columnAxis = yAxis;
+    face = cardinalDirectionIdx;
+  }
+
+  function move() {
+    if (isRobotPlaceIsOutOfTable(rowAxis, columnAxis)) return;
+
+    // Calculate next step
+    const direction = CARDINAL_DIRECTIONS[face];
+    const nextRowAxis = direction === 'NORTH' ? rowAxis + 1 : direction === 'SOUTH' ? rowAxis - 1 : rowAxis;
+    const nextColumnAxis = direction === 'EAST' ? columnAxis + 1 : direction === 'WEST' ? columnAxis - 1 : columnAxis;
+
+    // Terminate function if the next step is out of the table
+    if (isRobotPlaceIsOutOfTable(nextRowAxis, nextColumnAxis)) return;
+
+    // Moving the robot
+    rowAxis = nextRowAxis;
+    columnAxis = nextColumnAxis;
+  }
+
+  function rotate(direction) {
+    face = (face + 1 * (direction === 'RIGHT' ? 1 : -1) + CARDINAL_DIRECTIONS.length) % CARDINAL_DIRECTIONS.length;
+  }
+
+  function play(commands) {
+    for (const { command, type: commandType } of commands) {
+      switch (commandType) {
         case 'PLACE':
-          const xAxis = +command.charAt(8);
-          const yAxis = +command.charAt(6);
-          const direction = command.substring(10);
-          if (xAxis < 0 || xAxis > 4 || yAxis < 0 || yAxis > 4) continue;
-          rowAxis = xAxis;
-          columnAxis = yAxis;
-          face = direction;
+          place(command);
           break;
+
         case 'MOVE':
-          if (!rowAxis && !columnAxis && !face) continue;
-          if (face === 'NORTH') {
-            if (rowAxis + 1 > TABLE_ROWS) continue;
-            rowAxis += 1;
-          } else if (face === 'SOUTH') {
-            if (rowAxis - 1 < 0) continue;
-            rowAxis -= 1;
-          } else if (face === 'EAST') {
-            if (columnAxis + 1 > TABLE_COLUMNS) continue;
-            columnAxis += 1;
-          } else if (face === 'WEST') {
-            if (columnAxis - 1 < 0) continue;
-            columnAxis -= 1;
-          }
+          move();
           break;
+
         case 'LEFT':
-          if (!rowAxis && !columnAxis && !face) continue;
-          if (face === 'EAST') {
-            face = 'NORTH';
-          } else if (face === 'NORTH') {
-            face = 'WEST';
-          } else if (face === 'WEST') {
-            face = 'SOUTH';
-          } else if (face === 'SOUTH') {
-            face = 'EAST';
-          }
-          break;
         case 'RIGHT':
-          if (!rowAxis && !columnAxis && !face) continue;
-          if (face === 'EAST') {
-            face = 'SOUTH';
-          } else if (face === 'NORTH') {
-            face = 'EAST';
-          } else if (face === 'WEST') {
-            face = 'NORTH';
-          } else if (face === 'SOUTH') {
-            face = 'WEST';
-          }
+          rotate(commandType);
           break;
+
         case 'REPORT':
-          if (columnAxis !== null && rowAxis !== null) {
-            return `${columnAxis},${rowAxis},${face}`;
-          } else {
-            throw new Error('Invalid command');
-          }
-        default:
-          throw new Error('Invalid command');
+          return report();
+          break;
       }
     }
   }
 
   function init(inputCommands) {
     try {
-      return startGame(validateCommands(inputCommands));
+      return play(validateCommands(inputCommands));
     } catch (error) {
       return 'Invalid command';
     }
@@ -123,6 +135,16 @@ const robot = (function () {
     init: init,
     validate: validateCommands,
   };
+})();
+
+(async () => {
+  try {
+    robot.init(await readFromFile('testCase1.txt'));
+    robot.init(await readFromFile('testCase2.txt'));
+    robot.init(await readFromFile('testCase3.txt'));
+  } catch (error) {
+    console.log('Invalid command ', error);
+  }
 })();
 
 module.exports = { robot };
