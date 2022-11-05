@@ -99,7 +99,8 @@ git clone https://github.com/saddamarbaa/toy-robot-simulator-code-challenge
 5. Start the app .
 
 ```bash
-  npm start (this will read 3 test cases from file, validate and run the app)
+  npm start (This will open a terminal and give you options for entering your own command or read command from the existing file,
+  follow the instructions and type 'f' to read 4 test cases from file, validate and run the app or type your own command)
 ```
 
 6. Testing the application.
@@ -144,4 +145,14 @@ https://github.com/saddamarbaa
 
 ## Screenshots
 
-![Screenshot (545)](https://user-images.githubusercontent.com/51326421/199864697-39894811-0cff-47ca-ab01-840966d34a01.png)
+## Run test screenshot
+
+![Screenshot (554)](https://user-images.githubusercontent.com/51326421/200133057-222ece53-1916-48f4-94d4-7ff37b0c170a.png)
+
+## Read from file screenshot
+
+![Screenshot (547)](https://user-images.githubusercontent.com/51326421/200133118-1ee14ecd-4d0b-4f40-b066-642a2735e948.png)
+
+## Type your own command screenshot
+
+![Screenshot (552)](https://user-images.githubusercontent.com/51326421/200133173-48e2c0e2-54d9-4e97-a4a0-7665e6f00626.png)
