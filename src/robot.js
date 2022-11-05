@@ -1,16 +1,4 @@
-const { readFromFile } = require('./utils/helper');
-
-let commandLineArguments = [];
-
-function restCommandLineArgument() {
-  commandLineArguments = [];
-}
-
-function giveInstructions() {
-  restCommandLineArgument();
-  console.log('\nTo terminate this program, press CTRL+C (for Windows) or Command+C (for Mac) on your keyboard');
-  console.log('Start typing your commands below or type "F" to run already made test cases from the file\n');
-}
+const { readFromFile, logger, giveInstruction } = require('./utils/helper');
 
 const robot = (function () {
   const TABLE_ROWS = 4;
@@ -19,10 +7,6 @@ const robot = (function () {
   let rowAxis = null;
   let columnAxis = null;
   let face = null;
-
-  function logger(args) {
-    console.log(args);
-  }
 
   function validateCommands(commands, returnBoolean) {
     let errorMessage =
@@ -39,7 +23,7 @@ const robot = (function () {
           if (returnBoolean) {
             return false;
           }
-          restCommandLineArgument();
+          restCommandLine();
           logger(errorMessage);
           throw new Error(errorMessage);
         }
@@ -58,12 +42,12 @@ const robot = (function () {
           if (returnBoolean) {
             return false;
           }
-          restCommandLineArgument();
-          logger(/* A variable that is used to store error messages. */ errorMessage);
+          restCommandLine();
+          logger(errorMessage);
           throw new Error(errorMessage);
         } else if (isPlaceOutOfTable(remainder.charAt(2), remainder.charAt(0))) {
           errorMessage = 'Please enter a valid command: place is out table';
-          restCommandLineArgument();
+          restCommandLine();
           logger(errorMessage);
           throw new Error(errorMessage);
         }
@@ -71,9 +55,10 @@ const robot = (function () {
       });
 
     if (typeof commands === 'string') {
-      restCommandLineArgument();
-      logger('Please enter a valid file name (failed to read file)');
-      throw new Error('Please enter a valid file name (failed to read file)');
+      errorMessage = 'Please enter a valid file name (failed to read file)';
+      restCommandLine();
+      logger(errorMessage);
+      throw new Error(errorMessage);
     } else if (returnBoolean) return validationResult.every((item) => item === true);
     return validationResult;
   }
@@ -83,25 +68,25 @@ const robot = (function () {
   }
 
   function report() {
-    if (columnAxis !== null && rowAxis !== null) {
+    if (columnAxis !== null && rowAxis !== null && CARDINAL_DIRECTIONS[face]) {
       logger(`\nCurrent position of the toy robot is : ${columnAxis},${rowAxis},${CARDINAL_DIRECTIONS[face]}\n`);
-      giveInstructions();
+      restCommandLine();
+      giveInstruction();
       return `${columnAxis},${rowAxis},${CARDINAL_DIRECTIONS[face]}`;
     } else {
       logger(`Invalid command`);
-      giveInstructions();
+      restCommandLine();
+      giveInstruction();
       throw new Error('Invalid command');
     }
   }
 
   function place(command) {
-    // Extract x,y Axis and the direction
     const xAxis = +command.charAt(8);
     const yAxis = +command.charAt(6);
     const direction = command.substring(10);
     const cardinalDirectionIdx = CARDINAL_DIRECTIONS.findIndex((cardinalDirection) => cardinalDirection === direction);
 
-    // Saving robot place
     rowAxis = xAxis;
     columnAxis = yAxis;
     face = cardinalDirectionIdx;
@@ -110,15 +95,12 @@ const robot = (function () {
   function move() {
     if (isPlaceOutOfTable(rowAxis, columnAxis)) return false;
 
-    // Calculate next step
     const direction = CARDINAL_DIRECTIONS[face];
     const nextRowAxis = direction === 'NORTH' ? rowAxis + 1 : direction === 'SOUTH' ? rowAxis - 1 : rowAxis;
     const nextColumnAxis = direction === 'EAST' ? columnAxis + 1 : direction === 'WEST' ? columnAxis - 1 : columnAxis;
 
-    // Terminate function if the next step is out of the table
     if (isPlaceOutOfTable(nextRowAxis, nextColumnAxis)) return false;
 
-    // Moving the robot
     rowAxis = nextRowAxis;
     columnAxis = nextColumnAxis;
 
@@ -140,7 +122,8 @@ const robot = (function () {
           if (!canContinue) {
             const errorMessage = 'Invalid command: cant move';
             logger(errorMessage);
-            giveInstructions();
+            restCommandLine();
+            giveInstruction();
             throw new Error(errorMessage);
           }
           break;
@@ -169,6 +152,11 @@ const robot = (function () {
   };
 })();
 
+let commandLineArguments = [];
+function restCommandLine() {
+  commandLineArguments = [];
+}
+
 const startGame = async (commands) => {
   try {
     if (commands) {
@@ -180,12 +168,12 @@ const startGame = async (commands) => {
       robot.init(await readFromFile('testCase48.txt'));
     }
   } catch (error) {
-    restCommandLineArguments();
-    console.log('Invalid command ', error);
+    restCommandLine();
+    logger(`Invalid command  ${error}`);
   }
 };
 
-const readInput = () => {
+const readFromCommandLine = () => {
   let stdin = process.openStdin();
   stdin.addListener('data', function (input) {
     let command = input.toString().trim().toUpperCase();
@@ -193,15 +181,16 @@ const readInput = () => {
     if (command === 'REPORT') {
       startGame(commandLineArguments);
     } else if (command === 'F') {
-      restCommandLineArgument();
+      restCommandLine();
       startGame();
     }
   });
 };
 
 const init = () => {
-  giveInstructions();
-  readInput();
+  restCommandLine();
+  giveInstruction(true);
+  readFromCommandLine();
 };
 
 module.exports = { robot, init };
