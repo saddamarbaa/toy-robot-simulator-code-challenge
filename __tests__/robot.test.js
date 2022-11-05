@@ -45,7 +45,15 @@ describe(`Application simulation (Integration testing in simulation logic)`, () 
     expect(robot.init(await readFromFile('testCase3.txt'))).toBe('3,3,NORTH');
   });
 
-  test('Should fail to read the test case input from file name testCase4.txt ', async () => {
-    expect(robot.init(await readFromFile('testCase3m.txt'))).toBe('Invalid command');
+  test('Should fail to read the test case input from file name testCase40.txt and yield successful test pass  with message \n "Please enter a valid file name (failed to read file)"', async () => {
+    expect(robot.init(await readFromFile('testCase40.txt'))).toBe(
+      'Please enter a valid file name (failed to read file)' || 'Invalid command'
+    );
+  });
+
+  test('Should read the test4 case input from file name testCase4.txt validate the logic and yield  successful test pass with message  \n "Please enter a valid command: place is out table"', async () => {
+    expect(robot.init(await readFromFile('testCase4.txt'))).toBe(
+      'Please enter a valid command: place is out table' || 'Invalid command'
+    );
   });
 });
