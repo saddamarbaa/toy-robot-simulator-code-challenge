@@ -176,7 +176,8 @@ const startGame = async (commands) => {
 const readFromCommandLine = () => {
   let stdin = process.openStdin();
   stdin.addListener('data', function (input) {
-    let command = input.toString().trim().toUpperCase();
+    let command = input.toString().trim().split(' ').join('').toUpperCase();
+    if (command.includes('PLACE')) command = `PLACE ${command.substring(5)}`;
     commandLineArguments.push(command);
     if (command === 'REPORT') {
       startGame(commandLineArguments);
