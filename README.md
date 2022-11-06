@@ -1,14 +1,21 @@
-# Toy Robot Code Challeng
+Toy Robot Simulator
+===================
+
+
+Description
+-----------
 
 - The application is a simulation of a toy robot moving on a square tabletop, of dimensions 5 x 5 units.
 - There are no other obstructions on the table surface.
 - The robot is free to roam around the surface of the table, but must be prevented from falling to destruction. Any movement that would result in the robot falling from the table must be prevented, however further valid movement commands must still be allowed.
-  Create an application that can read in commands of the following form:
-- PLACE X,Y,F
-- MOVE
-- LEFT
-- RIGHT
-- REPORT
+ 
+Create an application that can read in commands of the following form:
+
+    PLACE X,Y,F
+    MOVE
+    LEFT
+    RIGHT
+    REPORT
 
 **PLACE**
 
@@ -32,49 +39,57 @@
 
 - Input can be from a file, or from standard input, as the developer chooses. . Provide test data to exercise the application.
 
-## Constraints
 
-The toy robot must not fall off the table during movement. This also includes the initial placement of the toy robot.
-Any move that would cause the robot to fall must be ignored.
 
-Example Input and Output:
-a)
+Constraints
+-----------
 
-> PLACE 0,0,NORTH
->
-> MOVE
->
-> REPORT
->
-> Output: 0,1,NORTH
+- The toy robot must not fall off the table during movement. This also
+  includes the initial placement of the toy robot.
+- Any move that would cause the robot to fall must be ignored.
 
-b)
 
-> PLACE 0,0,NORTH
->
-> LEFT
->
-> REPORT
->
-> Output: 0,0,WEST
 
-c)
+Example Input and Output
+------------------------
 
-> PLACE 1,2,EAST
->
-> MOVE
->
-> MOVE
->
-> LEFT
->
-> MOVE
->
-> REPORT
->
-> Output: 3,3,NORTH
+### Example a
 
-## Running the application
+    PLACE 0,0,NORTH
+    MOVE
+    REPORT
+
+Expected output:
+
+    0,1,NORTH
+
+### Example b
+
+    PLACE 0,0,NORTH
+    LEFT
+    REPORT
+
+Expected output:
+
+    0,0,WEST
+
+### Example c
+
+    PLACE 1,2,EAST
+    MOVE
+    MOVE
+    LEFT
+    MOVE
+    REPORT
+
+Expected output
+
+    3,3,NORTH
+
+
+
+Running the application
+------------------------
 
 1. Install node.js https://nodejs.org/en/.
 
@@ -116,22 +131,46 @@ git clone https://github.com/saddamarbaa/toy-robot-simulator-code-challenge
   (testCase1.txt, or testCase2.txt or testCase3.txt) with your own test cases
 ```
 
-## Technologies
+ Screenshots
+------------------------
+
+### Run test screenshot
+
+![Screenshot (554)](https://user-images.githubusercontent.com/51326421/200133057-222ece53-1916-48f4-94d4-7ff37b0c170a.png)
+
+
+### Read from file screenshot
+
+![Screenshot (547)](https://user-images.githubusercontent.com/51326421/200133118-1ee14ecd-4d0b-4f40-b066-642a2735e948.png)
+
+### Read from command line screenshot
+
+![Screenshot (552)](https://user-images.githubusercontent.com/51326421/200133173-48e2c0e2-54d9-4e97-a4a0-7665e6f00626.png)
+
+
+Technologies
+------------------------
 
 - JavaScript
 - Node.js
 - Jest
 
-## Status
+
+ Status
+------------------------
 
 Project is: in progress I'm working on it in my free time
 
-## Author
+
+ Author
+------------------------
 
 ### <a href="https://github.com/saddamarbaa">@Saddam Arbaa</a>
 
-## Feedback
 
+
+ Feedback
+------------------------
 If you have any feedback, please reach out to me at saddamarbaas@gmail.com
 
 Twitter
@@ -142,17 +181,3 @@ https://www.linkedin.com/in/saddamarbaa/
 
 Github
 https://github.com/saddamarbaa
-
-## Screenshots
-
-## Run test screenshot
-
-![Screenshot (554)](https://user-images.githubusercontent.com/51326421/200133057-222ece53-1916-48f4-94d4-7ff37b0c170a.png)
-
-## Read from file screenshot
-
-![Screenshot (547)](https://user-images.githubusercontent.com/51326421/200133118-1ee14ecd-4d0b-4f40-b066-642a2735e948.png)
-
-## Type your own command screenshot
-
-![Screenshot (552)](https://user-images.githubusercontent.com/51326421/200133173-48e2c0e2-54d9-4e97-a4a0-7665e6f00626.png)
